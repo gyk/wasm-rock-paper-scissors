@@ -1,0 +1,19 @@
+[package]
+name = "wasm-rock-paper-scissors"
+version = "0.1.0"
+authors = ["Yukun Guo <gyk.net@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+yew = { version = "0.17" }
+web-sys = { version = "0.3", features = ["Document", "Window", "Element"]}
+wasm-bindgen = "0.2.67"
+
+# See also: https://github.com/rust-random/rand/issues/886#issuecomment-609361290
+rand = "0.8"
+getrandom = { version = "0.2", features = ["js"] }
+
+sha2 = "0.9"

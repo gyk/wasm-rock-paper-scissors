@@ -1,0 +1,81 @@
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    padding: 1.5rem;
+    background-color: #C0C0C0;
+    font-size: 1rem;
+}
+
+.main {
+    width: 95%;
+    margin: auto;
+    padding: 2rem;
+    background-color: white;
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+.btn-hand {
+    font-size: 3.5rem;
+    padding: 0.5rem 0.5rem 0rem 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.vs-label {
+    font-size: 2.5rem;
+    margin: 1.5rem 2rem;
+}
+
+.scoreboard {
+    font-size: 1.1rem;
+}
+
+#current-round *, #last-round * {
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+.button-container {
+    padding: 1rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.table-container {
+    max-height: 50vh;
+    overflow: auto;
+    display: inline-block;
+    padding: 0.2rem;
+    font-size: 0.9rem;
+}
+
+code {
+    color: gray;
+}
+
+thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+}
+
+tbody {
+    display: block;
+    overflow-y: auto;
+    table-layout: fixed;
+    max-height: 12.5rem;
+}
+
+#history {
+    margin: auto;
+    width: 100%;
+}
