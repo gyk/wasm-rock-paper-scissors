@@ -38,23 +38,19 @@ impl PartialOrd for Hand {
 impl Hand {
     #[allow(dead_code)]
     pub fn cmp_as_str(lhs: Hand, rhs: Hand) -> &'static str {
-        if lhs < rhs {
-            "You lose"
-        } else if lhs == rhs {
-            "Draw"
-        } else {
-            "You win"
+        match lhs.cmp(&rhs) {
+            Ordering::Less => "You lose",
+            Ordering::Equal => "Draw",
+            Ordering::Greater => "You win",
         }
     }
 
     // Abbreviation
-    pub fn cmp_as_s(lhs: Hand, rhs: Hand) -> &'static str {
-        if lhs < rhs {
-            "L"
-        } else if lhs == rhs {
-            "D"
-        } else {
-            "W"
+    pub fn cmp_as_char(lhs: Hand, rhs: Hand) -> char {
+        match lhs.cmp(&rhs) {
+            Ordering::Less => 'L',
+            Ordering::Equal => 'D',
+            Ordering::Greater => 'W',
         }
     }
 
@@ -162,10 +158,7 @@ impl State {
 
     pub fn last_human_vs_computer(&self) -> Option<(Hand, Hand)> {
         match self.last_round() {
-            Some(round) => match round.human {
-                Some(human) => Some((human, round.computer)),
-                None => None,
-            },
+            Some(round) => round.human.map(|human| (human, round.computer)),
             None => None,
         }
     }
@@ -206,7 +199,7 @@ impl Round {
             i,
             computer: hand,
             random_bytes: random_bytes_hex,
-            digest: digest,
+            digest,
             human: None,
         }
     }

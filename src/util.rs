@@ -16,10 +16,7 @@ pub fn bytes_to_hex(bytes: &[u8]) -> String {
 
 /// Generates random bytes
 pub fn gen_random_bytes(size: usize) -> Vec<u8> {
-    let mut random_bytes = Vec::with_capacity(size);
-    unsafe {
-        random_bytes.set_len(size);
-    }
+    let mut random_bytes = vec![0; size];
     let mut rng = thread_rng();
     rng.fill(&mut random_bytes[..]);
     random_bytes

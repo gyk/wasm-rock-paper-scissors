@@ -285,7 +285,7 @@ impl Model {
                 <td>{ r.num1() }</td>
                 <td>{ r.human.unwrap().as_icon() }</td>
                 <td>{ r.computer.as_icon() }</td>
-                <td>{ Hand::cmp_as_s(r.human.unwrap(), r.computer) }</td>
+                <td>{ Hand::cmp_as_char(r.human.unwrap(), r.computer) }</td>
                 <td><pre>{ &r.random_bytes[..8] }</pre></td>
                 <td><pre>{ &r.digest[..8] }</pre></td>
             </tr>
