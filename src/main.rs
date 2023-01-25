@@ -1,15 +1,13 @@
-#![recursion_limit="512"]
+#![recursion_limit = "512"]
 
-use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 
 mod game;
 mod util;
 
-use crate::game::{State, Hand, Round};
+use crate::game::{Hand, Round, State};
 
 struct Model {
-    link: ComponentLink<Self>,
     state: State,
 }
 
@@ -23,14 +21,13 @@ impl Component for Model {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self {
-            link,
             state: State::new(),
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::HumanThrow(hand) => {
                 self.state.human_throw(hand);
@@ -45,18 +42,18 @@ impl Component for Model {
         true
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _ctx: &Context<Self>, _props: &Self::Properties) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class="main jumbotron">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-md">
-                                { self.view_hands() }
+                                { self.view_hands(ctx) }
                             </div>
                         </div>
                         <div class="row">
@@ -72,7 +69,7 @@ impl Component for Model {
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                { self.view_scoreboard() }
+                                { self.view_scoreboard(ctx) }
                             </div>
                         </div>
                     </div>
@@ -90,7 +87,7 @@ impl Component for Model {
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                { self.view_history() }
+                                { self.view_history(ctx) }
                             </div>
                         </div>
                     </div>
@@ -99,10 +96,13 @@ impl Component for Model {
         }
     }
 
-    fn rendered(&mut self, _first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
         if self.state.selected_round().is_none() {
             // Scrolls to the last row of the table.
-            let document = web_sys::window().expect("window").document().expect("document");
+            let document = web_sys::window()
+                .expect("window")
+                .document()
+                .expect("document");
             let table_body = document
                 .query_selector("#history tbody")
                 .expect("query_selector")
@@ -113,10 +113,10 @@ impl Component for Model {
 }
 
 impl Model {
-    fn view_hands(&self) -> Html {
+    fn view_hands(&self, ctx: &Context<Self>) -> Html {
         let computer = match self.state.last_human_vs_computer() {
             Some((_human, computer)) => computer.as_icon(),
-            None => "🤟🏼",
+            None => "👌🏼",
         };
 
         html! {
@@ -132,19 +132,19 @@ impl Model {
                     <span class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-primary btn-hand">
                             <input type="radio" name="options" autocomplete="off"
-                                onclick=self.link.callback(|_| Msg::HumanThrow(Hand::Rock))/>
+                                onclick={ctx.link().callback(|_| Msg::HumanThrow(Hand::Rock))}/>
                             { Hand::Rock.as_icon() }
                         </label>
 
                         <label class="btn btn-primary btn-hand">
                             <input type="radio" name="options" autocomplete="off"
-                                onclick=self.link.callback(|_| Msg::HumanThrow(Hand::Paper))/>
+                                onclick={ctx.link().callback(|_| Msg::HumanThrow(Hand::Paper))}/>
                             { Hand::Paper.as_icon() }
                         </label>
 
                         <label class="btn btn-primary btn-hand">
                             <input type="radio" name="options" autocomplete="off"
-                                onclick=self.link.callback(|_| Msg::HumanThrow(Hand::Scissors))/>
+                                onclick={ctx.link().callback(|_| Msg::HumanThrow(Hand::Scissors))}/>
                             { Hand::Scissors.as_icon() }
                         </label>
                     </span>
@@ -153,7 +153,7 @@ impl Model {
         }
     }
 
-    fn view_scoreboard(&self) -> Html {
+    fn view_scoreboard(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div id="scoreboard" class="card border-info mb-3">
                 <div class="card-header text-info bg-transparent border-info">
@@ -165,7 +165,7 @@ impl Model {
                     { ", Loss = " } { self.state.loss_count() }
                     { "\u{00a0}\u{00a0}\u{00a0}" }
                     <button type="button" class="btn btn-info"
-                        onclick=self.link.callback(|_| Msg::Restart)>
+                        onclick={ctx.link().callback(|_| Msg::Restart)}>
                         { "Restart" }
                     </button>
                 </div>
@@ -213,7 +213,10 @@ impl Model {
     }
 
     fn view_round_impl(&self, r: &Round) -> Html {
-        let human = r.human.expect("Human did not throw at last round").as_icon();
+        let human = r
+            .human
+            .expect("Human did not throw at last round")
+            .as_icon();
         let computer = r.computer.as_icon();
         let computer_str = r.computer.as_ref();
         let random = &r.random_bytes;
@@ -244,7 +247,7 @@ impl Model {
         }
     }
 
-    fn view_history(&self) -> Html {
+    fn view_history(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class="card border-secondary mb-3">
                 <div class="card-header text-secondary bg-transparent border-secondary">
@@ -267,7 +270,7 @@ impl Model {
                                 .state
                                 .history()
                                 .iter()
-                                .map(|r| self.view_history_row(r)) }
+                                .map(|r| self.view_history_row(ctx, r)) }
                         </tbody>
                     </table>
                 </div>
@@ -275,10 +278,10 @@ impl Model {
         }
     }
 
-    fn view_history_row(&self, r: &Round) -> Html {
+    fn view_history_row(&self, ctx: &Context<Self>, r: &Round) -> Html {
         let id = r.i;
         html! {
-            <tr onclick=self.link.callback(move |_| Msg::InspectRound(id))>
+            <tr onclick={ctx.link().callback(move |_| Msg::InspectRound(id))}>
                 <td>{ r.num1() }</td>
                 <td>{ r.human.unwrap().as_icon() }</td>
                 <td>{ r.computer.as_icon() }</td>
@@ -290,7 +293,6 @@ impl Model {
     }
 }
 
-#[wasm_bindgen(start)]
-pub fn run_app() {
-    App::<Model>::new().mount_to_body();
+fn main() {
+    yew::Renderer::<Model>::new().render();
 }

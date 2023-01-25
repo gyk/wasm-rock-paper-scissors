@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
-use rand::{thread_rng, seq::SliceRandom};
-use sha2::{Sha256, Digest};
+use rand::{seq::SliceRandom, thread_rng};
+use sha2::{Digest, Sha256};
 
 use crate::util::{bytes_to_hex, gen_random_bytes};
 
@@ -42,7 +42,7 @@ impl Hand {
             "You lose"
         } else if lhs == rhs {
             "Draw"
-        } else { // >
+        } else {
             "You win"
         }
     }
@@ -53,7 +53,7 @@ impl Hand {
             "L"
         } else if lhs == rhs {
             "D"
-        } else { // >
+        } else {
             "W"
         }
     }
@@ -115,10 +115,7 @@ impl State {
     }
 
     pub fn selected_round(&self) -> Option<&Round> {
-        self.selected_round
-            .and_then(|i| {
-                self.history.get(i)
-            })
+        self.selected_round.and_then(|i| self.history.get(i))
     }
 
     pub fn last_round(&self) -> Option<&Round> {
@@ -171,12 +168,17 @@ impl State {
             },
             None => None,
         }
-
     }
 
-    pub fn win_count(&self) -> usize { self.win_count }
-    pub fn draw_count(&self) -> usize { self.draw_count }
-    pub fn loss_count(&self) -> usize { self.loss_count }
+    pub fn win_count(&self) -> usize {
+        self.win_count
+    }
+    pub fn draw_count(&self) -> usize {
+        self.draw_count
+    }
+    pub fn loss_count(&self) -> usize {
+        self.loss_count
+    }
 }
 
 pub struct Round {
